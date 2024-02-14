@@ -70,9 +70,10 @@ def generate_complete_xml_jenkins_params_from_yaml(job_name_str, params_yaml_fil
     '''Takes in a params.yaml file, returns the xml string for the Jenkins job full config.'''
 
     job_conf_xml = server.get_job_config(job_name_str)
-    
+
     # generate a new job config.xml from the job params.yaml   
     root = ET.fromstring(job_conf_xml)
+
     parameters_definitions = root.find('properties').find('hudson.model.ParametersDefinitionProperty').find('parameterDefinitions')
 
     elements_to_remove = []
@@ -96,10 +97,10 @@ def generate_complete_xml_jenkins_params_from_yaml(job_name_str, params_yaml_fil
 
 def reconfigure_jenkins_jobs_params(parameters_yaml):
     jobs_list = server.get_jobs()
-    print(jobs_list)
     for job in jobs_list:
-        new_job_conf = generate_complete_xml_jenkins_params_from_yaml(job['name'], parameters_yaml)
-        server.reconfig_job(job['name'], new_job_conf)
+        if job['_class'] == 'hudson.model.FreeStyleProject':
+            new_job_conf = generate_complete_xml_jenkins_params_from_yaml(job['name'], parameters_yaml)
+            server.reconfig_job(job['name'], new_job_conf)
 
 reconfigure_jenkins_jobs_params('prod_wf_modules_redeploy.yaml')
 
