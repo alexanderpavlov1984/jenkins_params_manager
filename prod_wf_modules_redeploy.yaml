@@ -1,0 +1,13 @@
+---
+# PROD.WF.Modules redeploy job parameters
+name_a: MODULENAME
+choices_a:
+  - AbonentOrch-ear
+  - AbonentUnionOrch-ear
+  - AbonentUnionService-ear
+name_b: HOSTNAME
+choices_b:
+  - allWF
+  - allWF_1
+  - allWF_2
+...
