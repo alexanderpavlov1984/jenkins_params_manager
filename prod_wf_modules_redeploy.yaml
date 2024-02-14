@@ -5,9 +5,15 @@ choices_a:
   - AbonentOrch-ear
   - AbonentUnionOrch-ear
   - AbonentUnionService-ear
+  - test
 name_b: HOSTNAME
 choices_b:
   - allWF
   - allWF_1
   - allWF_2
+  - test
+name_c: TESTHOST 
+choices_b:
+  - one
+  - two
 ...
