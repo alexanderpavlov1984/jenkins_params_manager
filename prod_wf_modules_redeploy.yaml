@@ -12,7 +12,7 @@ choices_b:
   - allWF_1
   - allWF_2
   - test
-name_c: HOSTNAMETEST
+name_c: TEST
 choices_c:
   - one
   - two
