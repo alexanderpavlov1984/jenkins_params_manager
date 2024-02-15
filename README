@@ -1,0 +1,30 @@
+'''
+Этот скрипт позволяет автоматизировать конфигурирование параметров задач Jenkins.
+Параметры вносятся в .yaml фаил(ы) в формате:
+
+---
+# Params for the Jenkins jobs
+name_a: PARAMETER_ONE
+choices_a:
+  - One
+  - Two
+  - Three
+name_b: PARAMETER_TWO
+choices_b:
+  - One
+  - Two
+  - Three
+...
+
+Скрипт переводит yaml в xml-структуру в формате Jenkins-API, добавляет служебные xml-элементы необходимые для Jenkins-API,
+получает список задач с сервера Jenkins и устанавливает их параметры в соответствии с
+параметрами из .yaml файла(в) в директории со скриптом.
+На данный момент поддерживаются только Jenkins Freestyle Projects.
+'''
+
+__author__ = "Павлов Александр Станиславович"
+__version__ = "0.1.0"
+__maintainer__ = "Павлов Александр Станиславович"
+__email__ = "pavlovas@tricolor.ru"
+__status__ = "Development"
+
