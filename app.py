@@ -1,6 +1,6 @@
 '''
 Этот скрипт позволяет автоматизировать конфигурирование параметров задач Jenkins.
-Параметры вносятся в .yaml фаил(ы) в формате:
+Параметры вносятся в файл jobs_parameters.yaml в формате:
 
 ---
 # Params for the Jenkins jobs
@@ -16,10 +16,31 @@ choices_b:
   - Three
 ...
 
+Важно! Для ключей в jobs_parameters.yaml допустимы только названия:
+
+name_буква_английского_алфавита 
+choices_буква_английского_алфавита
+
+При добавлении нового параметра, эту букву нужно изменять на следующую
+букву английского алфавита.
+
 Скрипт переводит yaml в xml-структуру в формате Jenkins-API, добавляет служебные xml-элементы необходимые для Jenkins-API,
 получает список задач с сервера Jenkins и устанавливает их параметры в соответствии с
 параметрами из .yaml файла(в) в директории со скриптом.
-На данный момент поддерживаются только Jenkins Freestyle Projects.
+Скрипт проверят наличие параметра указанного в файле jobs_parameters.yaml для всех задач (freestyle projects, pipelines) 
+на сервере Jenkins, если у задачи на сервере Jenkins есть параметр указанный в файле jobs_parameters.yaml, тогда для этой
+задачи значения изменяются на значения из файла. Значения параметров не указанные в файле jobs_parameters.yaml не изменяются.
+В версии 0.1.0 поддерживается только Choice Parameter !
+
+Установка зависимостей:
+
+pip3 install -r requirements.txt
+
+Запуск скрипта:
+
+python3 app.py jenkins_username jenkins_password
+
+
 '''
 
 __author__ = "Павлов Александр Станиславович"
@@ -33,9 +54,11 @@ import xml.etree.ElementTree as ET
 from xml.etree import ElementTree
 import yaml
 from yaml.loader import SafeLoader
-import re
+from sys import argv
 
-server = jenkins.Jenkins('http://51.250.87.0:8080/', username='pavlovas', password='c6f31c15976a4960bb5dc33542a8d0b7')
+script, first, second = argv
+
+server = jenkins.Jenkins('http://51.250.87.0:8080/', username=first, password=second)
 YAML_CONF_FILE = 'jobs_parameters.yaml'
 
 def generate_choise_params_xml_from_yaml_file(parametr_name):
@@ -109,7 +132,6 @@ def generate_jenkins_freestyle_conf_from_yaml_file(job_name_str):
 def reconfigure_jenkins_jobs_params():
     jobs_list = server.get_jobs()
     for job in jobs_list:
-        #if job['_class'] == 'hudson.model.FreeStyleProject':
         new_job_conf = generate_jenkins_freestyle_conf_from_yaml_file(job['name'])
         server.reconfig_job(job['name'], new_job_conf)
  
