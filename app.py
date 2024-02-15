@@ -68,8 +68,6 @@ def generate_choise_params_xml_from_yaml_file(parametr_name):
             new_choice_parameter_definition += '    </a>\n'
             new_choice_parameter_definition += '  </choices>\n'
             new_choice_parameter_definition += '</hudson.model.ChoiceParameterDefinition>'
-        else:
-            print('Unknown key in yaml file !')
 
     return new_choice_parameter_definition
 
@@ -85,25 +83,26 @@ def generate_jenkins_freestyle_conf_from_yaml_file(job_name_str):
 
     job_conf_xml = server.get_job_config(job_name_str)
 
-    # generate a new job config.xml from the job params.yaml   
-    root = ET.fromstring(job_conf_xml)
+    try:
+        # generate a new job config.xml from the job params.yaml   
+        root = ET.fromstring(job_conf_xml)
 
-    parameter_definitions = root.find('properties').find('hudson.model.ParametersDefinitionProperty').find('parameterDefinitions')
-    if parameter_definitions is None:
+        parameter_definitions = root.find('properties').find('hudson.model.ParametersDefinitionProperty').find('parameterDefinitions')
+
+        for key in parameters_dic.keys():
+            if key[0:4] == 'name':
+                for element in root.iter('hudson.model.ChoiceParameterDefinition'):
+                    if element[0].text == parameters_dic[key]:
+                        parameter_definitions.remove(element)
+                        choice_xml = generate_choise_params_xml_from_yaml_file(parameters_dic[key])
+                        choice_et = ET.fromstring(choice_xml)
+                        parameter_definitions.append(choice_et)
+
+        tree = ET.ElementTree(root)
+        ET.indent(tree, space="  ", level=0)
+        xml_modified = ElementTree.tostring(root, encoding='unicode')
+    except:
         return job_conf_xml
-
-    for key in parameters_dic.keys():
-        if key[0:4] == 'name':
-            for element in root.iter('hudson.model.ChoiceParameterDefinition'):
-                if element[0].text == parameters_dic[key]:
-                    parameter_definitions.remove(element)
-                    choice_xml = generate_choise_params_xml_from_yaml_file(parameters_dic[key])
-                    choice_et = ET.fromstring(choice_xml)
-                    parameter_definitions.append(choice_et)
-
-    tree = ET.ElementTree(root)
-    ET.indent(tree, space="  ", level=0)
-    xml_modified = ElementTree.tostring(root, encoding='unicode')
 
     return xml_modified
 
