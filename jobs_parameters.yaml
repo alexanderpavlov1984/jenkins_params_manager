@@ -166,7 +166,6 @@ choices_a:
   - web-adapter
   - web-b2b-adapter
   - yandex-ear
-  - TTTTTTT
 name_b: HOSTNAME
 choices_b:
   - allWF
@@ -217,5 +216,4 @@ choices_b:
   - mv-app-push-01
   - mv-payg-05
   - mv-payg-06
-  - TTTTTTTT
 ...
